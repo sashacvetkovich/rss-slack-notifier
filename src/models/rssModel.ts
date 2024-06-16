@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface DbRssItem extends Document {
   title: string;
-  link: string;
+  rssId: string;
   createdAt: Date;
 }
 

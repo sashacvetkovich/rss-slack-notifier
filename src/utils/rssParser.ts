@@ -1,34 +1,47 @@
 import Parser from "rss-parser";
 import logger from "./logger";
-import { RssItemType } from "../types/rssTypes";
 import RssItem from "../models/rssModel";
 import { sendSlackNotification } from "./slackNotifier";
 
 const parser = new Parser();
 
-export const parseRSS = async (url: string): Promise<void> => {
+export const parseRSS = async (url: string) => {
   try {
     const feed = await parser.parseURL(url);
     let message = "";
 
-    for (const item of feed.items as RssItemType[]) {
-      const existingItem = await RssItem.findOne({ rssId: item.guid });
+    // Collect all new items
+    const newItems = feed.items.map((item) => ({
+      title: item.tile,
+      rssId: item.guid as string,
+      createdAt: item.isoDate,
+    }));
 
-      if (!existingItem) {
-        const newItem = new RssItem({
-          title: item.title,
-          rssId: item.guid,
-          createdAt: new Date(),
-        });
+    // Find existing items in the database
+    const existingItems = (await RssItem.find()).map((item) => ({
+      title: item.title,
+      rssId: item.rssId,
+      createdAt: item.createdAt,
+    }));
 
-        await newItem.save();
+    // Filter out existing items from new items
+    const existingItemIds = new Set(existingItems.map((item) => item.rssId));
+    const itemsToInsert = newItems.filter(
+      (item) => !existingItemIds.has(item.rssId)
+    );
 
-        const newItemMessage = `New item has been added: ${item.title} \n${item.link}\n\n`;
+    // Insert new items
+    if (itemsToInsert.length) {
+      await RssItem.insertMany(itemsToInsert);
+
+      // Construct the Slack message
+      itemsToInsert.forEach((item) => {
+        const newItemMessage = `New item has been added: ${item.title} \n${item.rssId}\n\n`;
         message += newItemMessage;
-      }
-    }
+      });
 
-    if (message) await sendSlackNotification(message);
+      await sendSlackNotification(message);
+    }
   } catch (error) {
     logger.error(`Error fetching or parsing feed ${url}:`, error);
   }
