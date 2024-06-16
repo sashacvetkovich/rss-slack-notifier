@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db";
 import logger from "./utils/logger";
+import "./jobs/cronJobs";
 
 dotenv.config();
 
