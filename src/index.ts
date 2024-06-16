@@ -1,4 +1,4 @@
-import express, { Express } from "express";
+import express from "express";
 // Routes
 import { checkMongoHealth } from "./routes/healthCheck";
 // Utils
@@ -9,7 +9,7 @@ import "./jobs/cronJobs";
 
 dotenv.config();
 
-const app: Express = express();
+const app = express();
 const port = process.env.PORT || 8000;
 
 // Health check route

@@ -18,15 +18,16 @@ export const parseRSS = async (url: string): Promise<void> => {
         const newItem = new RssItem({
           title: item.title,
           rssId: item.guid,
-          date: item.isoDate,
+          createdAt: new Date(),
         });
-        
+
         await newItem.save();
 
         const newItemMessage = `New item has been added: ${item.title} \n${item.link}\n\n`;
         message += newItemMessage;
       }
     }
+
     if (message) await sendSlackNotification(message);
   } catch (error) {
     logger.error(`Error fetching or parsing feed ${url}:`, error);

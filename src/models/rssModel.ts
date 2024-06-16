@@ -1,20 +1,20 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export interface IItem extends Document {
+export interface DbRssItem extends Document {
   title: string;
   link: string;
-  date: string;
+  createdAt: Date;
 }
 
 const RssSchema: Schema = new Schema(
   {
     title: { type: String, required: true },
-    rssId: { type: String, required: true },
-    date: { type: String, required: true },
+    rssId: { type: String, required: true, unique: true },
+    createdAt: { type: Date, required: true },
   },
   { collection: "rssitems" }
 );
 
-const RssItem = mongoose.model<IItem>("RssItem", RssSchema);
+const RssItem = mongoose.model<DbRssItem>("RssItem", RssSchema);
 
 export default RssItem;
