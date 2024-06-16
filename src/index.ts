@@ -1,17 +1,19 @@
-import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
+import express, { Express } from "express";
+// Routes
+import { checkMongoHealth } from "./routes/healthCheck";
+// Utils
 import connectDB from "./config/db";
+import dotenv from "dotenv";
 import logger from "./utils/logger";
 import "./jobs/cronJobs";
 
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express Server");
-});
+// Health check route
+app.get("/health", checkMongoHealth);
 
 app.listen(port, () => {
   connectDB();
