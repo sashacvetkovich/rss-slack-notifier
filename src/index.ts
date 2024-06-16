@@ -2,7 +2,6 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db";
 import logger from "./utils/logger";
-import { fetchFeeds } from "./services/rssService";
 
 dotenv.config();
 
@@ -16,5 +15,4 @@ app.get("/", (req: Request, res: Response) => {
 app.listen(port, () => {
   connectDB();
   logger.info(`Server is listening on port: ${port}`);
-  fetchFeeds()
 });

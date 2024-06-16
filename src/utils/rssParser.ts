@@ -1,13 +1,16 @@
-import Parser  from 'rss-parser';
-import logger from './logger';
-import { RssItemType } from '../types/rssTypes';
-import RssItem from '../models/rssModel';
+import Parser from "rss-parser";
+import logger from "./logger";
+import { RssItemType } from "../types/rssTypes";
+import RssItem from "../models/rssModel";
+import { sendSlackNotification } from "./slackNotifier";
 
 const parser = new Parser();
 
 export const parseRSS = async (url: string): Promise<void> => {
   try {
-    const feed  = await parser.parseURL(url);
+    const feed = await parser.parseURL(url);
+    let message = "";
+
     for (const item of feed.items as RssItemType[]) {
       const existingItem = await RssItem.findOne({ rssId: item.guid });
 
@@ -15,12 +18,16 @@ export const parseRSS = async (url: string): Promise<void> => {
         const newItem = new RssItem({
           title: item.title,
           rssId: item.guid,
-          date: item.isoDate
+          date: item.isoDate,
         });
+        
         await newItem.save();
-        logger.info(`New item saved: ${item.title}`);
+
+        const newItemMessage = `New item has been added: ${item.title} \n${item.link}\n\n`;
+        message += newItemMessage;
       }
     }
+    if (message) await sendSlackNotification(message);
   } catch (error) {
     logger.error(`Error fetching or parsing feed ${url}:`, error);
   }
