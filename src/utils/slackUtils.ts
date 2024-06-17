@@ -1,5 +1,6 @@
 import logger from "./logger";
 import { WebClient } from "@slack/web-api";
+import { RssItemType } from "../models/rssModel";
 
 export const sendSlackNotification = async (message: string) => {
   const channelId = process.env.SLACK_CHANNEL_ID as string;
@@ -14,4 +15,15 @@ export const sendSlackNotification = async (message: string) => {
   } catch (error) {
     logger.error("Failed to send Slack message", error);
   }
+};
+
+export const constructSlackMessage = (rssItems: RssItemType[]) => {
+  let message = "";
+
+  rssItems.forEach((item) => {
+    const newItemMessage = `New Item Added:\n*${item.title}* \n${item.rssId}\n\n`;
+    message += newItemMessage;
+  });
+
+  return message;
 };

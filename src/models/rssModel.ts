@@ -1,10 +1,12 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export interface DbRssItem extends Document {
+export interface RssItemType {
   title: string;
   rssId: string;
   createdAt: Date;
 }
+
+export interface DbRssItem extends Document, RssItemType {}
 
 const RssSchema: Schema = new Schema(
   {
