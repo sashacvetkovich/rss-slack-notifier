@@ -21,7 +21,7 @@ export const constructSlackMessage = (rssItems: RssItemType[]) => {
   let message = "";
 
   rssItems.forEach((item) => {
-    const newItemMessage = `New Item Added:\n*${item.title}* \n${item.rssId}\n\n`;
+    const newItemMessage = `New Item Added:\n*${item.title}*\n${item.rssId}\n\n`;
     message += newItemMessage;
   });
 
