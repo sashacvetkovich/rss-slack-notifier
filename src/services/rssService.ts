@@ -1,4 +1,4 @@
-import { feedUrls } from "../config/feeds";
+import { getFeedUrls } from "../config/feeds";
 import RssItem from "../models/rssModel";
 import logger from "../utils/logger";
 import { parseRSS } from "../utils/rssParser";
@@ -8,6 +8,8 @@ import {
 } from "../utils/slackUtils";
 
 export const fetchFeeds = async () => {
+  const feedUrls = getFeedUrls();
+
   for (const url of feedUrls) {
     try {
       const rssItems = await parseRSS(url);
