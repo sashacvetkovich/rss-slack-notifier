@@ -12,7 +12,7 @@ export const parseRSS = async (url: string) => {
 
     // Collect all new items
     const newItems = feed.items.map((item) => ({
-      title: item.tile,
+      title: item.title,
       rssId: item.guid as string,
       createdAt: item.isoDate,
     }));
@@ -36,7 +36,7 @@ export const parseRSS = async (url: string) => {
 
       // Construct the Slack message
       itemsToInsert.forEach((item) => {
-        const newItemMessage = `New item has been added: ${item.title} \n${item.rssId}\n\n`;
+        const newItemMessage = `New Item Added:\n *${item.title}* \n${item.rssId}\n\n`;
         message += newItemMessage;
       });
 
